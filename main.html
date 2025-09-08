@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>رحانغيه كيبورڈ</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+ <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi+Ink&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            --secondary-gradient: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            --key-gradient: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            --special-key-gradient: linear-gradient(145deg, #e2e8f0 0%, #cbd5e1 100%);
+            --background-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --text-color: #1e293b;
+            --button-text-color: #475569;
+            --active-gradient: linear-gradient(145deg, #06b6d4 0%, #0891b2 100%);
+            --copy-button-gradient: linear-gradient(145deg, #10b981 0%, #059669 100%);
+            --clear-button-gradient: linear-gradient(145deg, #f59e0b 0%, #d97706 100%);
+            --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.2);
+            --border-radius: 16px;
+            --key-border-radius: 12px;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--background-gradient);
+            margin: 0;
+            padding: 1rem;
+            padding-top: 64px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            overflow: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .urdu-font {
+            font-family: 'Noto Naskh Arabic', serif;
+        }
+        .header-ribbon {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1d1d1f;
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: -0.016em;
+            font-family: 'Reem Kufi Ink', sans-serif;
+            z-index: 1000;
+            border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.8);
+        }
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex: 1;
+            min-height: 0;
+            position: relative;
+            z-index: 1;
+        }
+        .writing-box {
+            flex: 1;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            min-height: 0;
+            resize: none;
+            outline: none;
+            direction: rtl;
+            color: var(--text-color);
+            overflow-y: auto;
+            box-shadow: var(--shadow-medium);
+            transition: all 0.3s ease;
+        }
+        .writing-box:focus {
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1), var(--shadow-heavy);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .action-button {
+            font-weight: 600;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .action-button:hover::before {
+            left: 100%;
+        }
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-heavy);
+        }
+        .action-button:active {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-light);
+        }
+       .copy-button {
+            background: var(--copy-button-gradient);
+       }
+        .clear-button {
+            background: var(--clear-button-gradient);
+        }
+        .keyboard-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: var(--key-border-radius);
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .keyboard-toggle:hover {
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-1px);
+       }
+        .toggle-label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 28px;
+            white-space: nowrap;
+        }
+        .material-toggle {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+        }
+        .toggle-track {
+            width: 36px;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            position: relative;
+            transition: background-color 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .material-toggle.enabled .toggle-track {
+            background: #1976d2;
+        }
+        .toggle-thumb {
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+        }
+        .material-toggle.enabled .toggle-thumb {
+            transform: translateX(16px);
+        }
+        .keyboard-container {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            direction: ltr;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+       .keyboard-row {
+            display: flex;
+           justify-content: center;
+            align-items: stretch;
+            gap: 0.5rem;
+            margin: 0.4rem 0;
+        }
+        .key {
+            flex-grow: 1;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: var(--key-border-radius);
+           font-size: 1.3rem;
+           font-weight: 700;
+            color: var(--button-text-color);
+            background: var(--key-gradient);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-basis: 0;
+            min-width: 2.5rem;
+            font-family: 'Roboto', sans-serif;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .key::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.1) 100%);
+            transition: opacity 0.2s ease;
+        }
+        .key > * {
+            position: relative;
+            z-index: 1;
+        }
+        .key.special-key {
+            background: var(--special-key-gradient);
+            border-color: rgba(203, 213, 225, 0.8);
+        }
+        .key:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        .key.special-key:hover {
+            border-color: rgba(100, 116, 139, 0.4);
+        }
+        .nastaliq-key {
+            font-family: 'Noto Naskh Arabic', serif;
+           font-size: 1.4rem;
+        }
+        .material-symbols-key {
+            font-family: 'Material Symbols Outlined', sans-serif;
+ font-size: 1rem;
+ font-weight: normal;
+        }
+        .key:active {
+            transform: translateY(0);
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        .key-space {
+            flex-grow: 4;
+            height: 3rem;
+            min-width: unset;
+        }
+        .key-enter, .key-backspace {
+            flex-grow: 1.5;
+            min-width: unset;
+        }
+        .key-shift, .key-capslock {
+            flex-grow: 2;
+            min-width: unset;
+        }
+        .key-ctrl, .key-alt {
+            flex-grow: 1;
+            min-width: unset;
+        }
+        .key-dot {
+            flex-grow: 2;
+            min-width: unset;
+        }
+        .key-ctrl, .key-alt {
+ font-size: 1rem;
+ font-family: inherit; /* Or 'Arial', sans-serif; */
+ font-family: 'Verdana', Geneva, sans-serif;
+        }
+        .active-key {
+            background: var(--active-gradient);
+            color: white;
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2), 0 0 20px rgba(59, 130, 246, 0.4);
+            border-color: rgba(59, 130, 246, 0.6);
+            transform: translateY(1px);
+        }
+
+        @media (min-width: 768px) {
+            .controls-container {
+                flex-direction: row;
+                gap: 1.5rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+                gap: 1rem;
+                min-width: 140px;
+            }
+            .header-ribbon {
+                height: 48px;
+                font-size: 1.2rem;
+            }
+            body {
+                padding-top: 68px;
+            }
+            .key {
+                height: 3.5rem;
+               font-size: 1.4rem;
+            }
+            .key-space, .key-enter, .key-backspace, .key-shift, .key-capslock, .key-dot {
+                height: 3.5rem;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            body {
+                padding: 0.5rem;
+                padding-top: 60px;
+            }
+            .header-ribbon {
+                height: 40px;
+                font-size: 1rem;
+            }
+            .keyboard-toggle {
+                padding: 0.5rem 0.75rem;
+                gap: 0.4rem;
+            }
+            .keyboard-container {
+                padding: 0.5rem;
+                overflow-x: auto;
+            }
+            .keyboard-row {
+                gap: 0.25rem;
+                margin: 0.25rem 0;
+           }
+            .key {
+                height: 2.2rem;
+ font-size: 1rem;
+            }
+            .nastaliq-key {
+                min-width: 1.8rem;
+                padding: 0.25rem;
+                flex-shrink: 0;
+            }
+            .key-space {
+               flex-grow: 3;
+                min-width: 6rem;
+            }
+            .material-symbols-key {
+                font-size: 1.3rem;
+            }
+            .key-enter, .key-backspace {
+               flex-grow: 1.2;
+                min-width: 3rem;
+            }
+            .key-shift, .key-capslock {
+               flex-grow: 1.5;
+                min-width: 3.5rem;
+            }
+            .key-ctrl, .key-alt {
+               flex-grow: 0.8;
+                min-width: 2.5rem;
+            }
+            .key-dot {
+               flex-grow: 1.5;
+                min-width: 3rem;
+            }
+            .key-space, .key-enter, .key-backspace, .key-shift, .key-capslock, .key-dot {
+                height: 2.2rem;
+           }
+        }
+    </style>
+</head>
+<body class="urdu-font">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const keyMap = {
+            normal: {
+                // Number row
+                '`': '\u064B',
+                '1': '1',
+                '2': '2',
+                '3': '3',
+                '4': '4',
+                '5': '5',
+                '6': '6',
+                '7': '7',
+                '8': '8',
+                '9': '9',
+                '0': '0',
+                '-': '۔',
+                '=': '\u06E4',
+                
+                // Top row (QWERTY)
+                'q': 'ق',
+                'w': 'و',
+                'e': 'ع',
+                'r': 'ر',
+                't': 'ت',
+                'y': 'ے',
+                'u': 'ئ',
+                'i': 'ي',
+                'o': 'ه',
+                'p': 'پ',
+                '[': '\u064C',
+                ']': '\u064F',
+                '\\': 'پ', //would change later
+                
+                // Middle row (ASDF)
+                'a': 'ا',
+                's': 'س',
+                'd': 'د',
+                'f': 'ف',
+                'g': 'گ',
+                'h': 'ھ',
+                'j': 'ج',
+                'k': 'ك',
+                'l': 'ل',
+                ';': '\u061B',
+                "'": '\u2019',
+                
+                // Bottom row (ZXCV)
+                'z': 'ز',
+                'x': 'ش',
+                'c': 'چ',
+                'v': 'ط',
+                'b': 'ب',
+                'n': 'ن',
+                'm': 'م',
+                ',': '\u060C',
+                '.': '.',
+                '/': '\u061F',
+                
+                // Special characters
+                ' ': ' '
+            },
+            
+            shifted: {
+                // Number row (shifted)
+                '~': '`',
+                '!': '!',
+                '@': 'ء',
+                '#': 'ث',
+                '$': 'ڈ',
+                '%': 'گھ',
+                '^': 'ہ',
+                '&': 'َ',
+                '*': 'ّ',
+                '(': '(',
+                ')': ')',
+                '_': 'ْ',
+                '+': 'ض',
+                '-': '_',
+                '=': '+',
+                '1': '!',
+                '2': '@',
+                '3': '#',
+                '4': '$',
+                '5': '%',
+                '6': '^',
+                '7': '&',
+                '8': '*',
+                '9': ')',
+                '0': '(',
+                
+                // Top row (shifted QWERTY)
+                'Q': '\uFDFA',
+                'W': '\u0624',
+                'E': '\u0610',
+                'R': 'ڑ',
+                'T': 'ٹ',
+                'Y': '\u06D3',
+                'U': '\u0621',
+                'I': '\u0670',
+                'O': '\u06C3',
+                'P': '\u064F',
+                '[': '\u0657',
+				']': 'ﹼ',
+                '\\': '|',
+                '}': 'گ',
+
+                // Middle row (shifted ASDF)
+                'A': 'آ',
+                'S': 'ص',
+                'D': 'ڈ',
+                'F': '\u0656',
+                'G': 'غ',
+                'H': 'ح',
+                'J': 'ض',
+                'K': 'خ',
+                'L': '\u0612',
+                ':': ':',
+                "'": '"',
+                ';' : '؛',
+
+                // Bottom row (shifted ZXCV)
+                'Z': 'ذ',
+                'X': 'ژ',
+                'C': 'ث',
+                'V': 'ظ',
+                'B': '﷽',
+                'N': 'ں',
+                'M': '\u0610',
+                '<': '\u0650',
+                ',': '\u064E',
+                '.': '؟',
+                
+                // Special characters
+                ' ': ' '
+            }
+        };
+
+        const otherKeys = {
+            'Backspace': 'backspace', // Keep this
+            'Tab': 'keyboard_tab', // Changed to 'keyboard_tab'
+            'Caps Lock': 'lock_open', // Changed to 'caps_lock'
+            'Enter': 'keyboard_return', // Keep this
+            'Shift': 'Shift', // Keep this
+            'Control': 'control_key', // Changed to 'control_key'
+            'Alt': 'Alt',
+            'Dot_Key': 'fiber_manual_record',
+            'Clear': 'delete',
+            'Copy': 'Copy',
+        };
+
+        const keyboardLayout = [
+            ['~', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
+            ['Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\'],
+            ['Caps Lock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'", 'Enter'],
+            ['Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 'Shift'],
+            ['Ctrl', 'Alt', ' ', 'Dot_Key']
+        ];
+
+        const App = () => {
+            const [text, setText] = useState('');
+            const [isShifted, setIsShifted] = useState(false);
+            const [isCaps, setIsCaps] = useState(false);
+            const [activeKey, setActiveKey] = useState(null);
+            const [keyboardInputEnabled, setKeyboardInputEnabled] = useState(true);
+            const textareaRef = React.useRef(null);
+
+            const handleTextChange = (event) => {
+                setText(event.target.value);
+            };
+
+            const handleSpecialAction = (key) => {
+                if (key === 'Backspace') {
+                    setText(prev => prev.slice(0, -1));
+                } else if (key === 'Enter') {
+                    setText(prev => prev + '\n');
+                } else if (key === 'Tab') {
+                    setText(prev => prev + '    ');
+                } else if (key === 'Shift') {
+                    setIsShifted(prev => !prev);
+                } else if (key === 'Caps Lock') {
+                    setIsCaps(prev => !prev);
+                } else if (key === 'Dot_Key') {
+                    setText(prev => prev + '.');
+                } else if (key === 'Clear') {
+                    setText('');
+                } else if (key === 'Copy') {
+                    navigator.clipboard.writeText(text).then(() => {
+                        alert('Text copied to clipboard!');
+                    });
+                } else if (key === 'space') {
+                    setText(prev => prev + ' ');
+                }
+            };
+            
+            const handleCharacterInput = (key) => {
+                const lookupKey = isShifted ? key.toUpperCase() : key.toLowerCase();
+                const mappedChar = isShifted ? keyMap.shifted[lookupKey] : keyMap.normal[lookupKey];
+                if (mappedChar !== undefined) {
+                    setText(prev => prev + mappedChar);
+                }
+            };
+
+            const handleVirtualKeyPress = (key) => {
+                setActiveKey(key);
+                if (otherKeys[key]) {
+                    handleSpecialAction(key);
+                } else {
+                    handleCharacterInput(key);
+                }
+                setTimeout(() => setActiveKey(null), 100);
+                textareaRef.current.focus();
+            };
+
+            const handlePhysicalKeyboard = (event) => {
+                const key = event.key;
+                
+                if (keyboardInputEnabled) {
+                    if (event.type === 'keydown') {
+                        setActiveKey(key);
+                        if (key === 'Shift') {
+                            setIsShifted(true);
+                        } else if (key === 'CapsLock') {
+                            setIsCaps(prev => !prev);
+                        } else if (key === 'Backspace' || key === 'Enter' || key === 'Tab') {
+                            event.preventDefault();
+                            handleSpecialAction(key);
+                        } else if (key.length === 1 && !event.ctrlKey && !event.altKey) {
+                            event.preventDefault();
+                            handleCharacterInput(key);
+                        }
+                    } else if (event.type === 'keyup') {
+                        setActiveKey(null);
+                        if (key === 'Shift') {
+                            setIsShifted(false);
+                        }
+                    }
+                }
+            };
+
+            useEffect(() => {
+                window.addEventListener('keydown', handlePhysicalKeyboard);
+                window.addEventListener('keyup', handlePhysicalKeyboard);
+                return () => {
+                    window.removeEventListener('keydown', handlePhysicalKeyboard);
+                    window.removeEventListener('keyup', handlePhysicalKeyboard);
+                };
+            }, [isShifted, isCaps, keyboardInputEnabled]);
+
+            const getKeyLabel = (key) => {
+                const isUrduCharKey = key.length === 1 && keyMap.normal[key.toLowerCase()] !== undefined;
+
+                if (otherKeys[key]) {
+                    return otherKeys[key];
+                }
+
+                if (isUrduCharKey) {
+                    const lookupKey = isShifted ? key.toUpperCase() : key.toLowerCase();
+                    return isShifted ? keyMap.shifted[lookupKey] : keyMap.normal[lookupKey];
+                }
+                return key;
+            };
+
+            const getKeyClass = (key) => {
+                let classes = 'key';
+                const isUrduKey = key.length === 1 && keyMap.normal[key.toLowerCase()] !== undefined; 
+                const hasSymbol = ['Backspace', 'Tab', 'Enter', 'Shift', 'Dot_Key', 'Caps Lock', 'Alt'].includes(key);
+
+                if (!isUrduKey) {
+                    classes += ' special-key';
+                }
+
+                if (hasSymbol) {
+                    if (key !== 'Alt') classes += ' material-symbols-key';
+
+                }
+
+                if (isUrduKey) {
+                    classes += ' nastaliq-key';
+                }
+                
+                if (key === ' ') classes += ' key-space';
+                else if (key === 'Enter') classes += ' key-enter';
+                else if (key === 'Backspace') classes += ' key-backspace';
+                else if (key === 'Shift') classes += ' key-shift';
+                else if (key === 'Caps Lock') classes += ' key-capslock';
+                else if (key === 'Ctrl') classes += ' key-ctrl';
+                else if (key === 'Alt') classes += ' key-ctrl';
+                else if (key === 'Dot_Key') classes += ' key-dot';
+
+                if (activeKey === key || (key === 'Shift' && isShifted) || (key === 'Caps Lock' && isCaps)) {
+                    classes += ' active-key';
+                }
+                return classes;
+            };
+
+            return (
+                <>
+                    <div className="header-ribbon">رحانغيه كيبورڈ</div>
+                    <div className="controls-container">
+                        <textarea
+                            ref={textareaRef}
+                            className="writing-box urdu-font"
+                            value={text}
+                            onChange={handleTextChange}
+                            placeholder="ليخھو..."
+                        ></textarea>
+                        <div className="action-buttons">
+                            <button className="action-button copy-button" onClick={() => handleVirtualKeyPress('Copy')}>Copy</button>
+                            <button className="action-button clear-button" onClick={() => handleVirtualKeyPress('Clear')}>Clear</button>
+                            <div className="keyboard-toggle">
+                                <span className="toggle-label material-symbols-key">keyboard</span>
+                                <div 
+                                    className={`material-toggle ${keyboardInputEnabled ? 'enabled' : 'disabled'}`}
+                                    onClick={() => setKeyboardInputEnabled(prev => !prev)}
+                                >
+                                    <div className="toggle-track">
+                                        <div className="toggle-thumb"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="keyboard-container">
+                        {keyboardLayout.map((row, rowIndex) => (
+                            <div key={rowIndex} className="keyboard-row">
+                                {row.map((key, keyIndex) => (
+                                    <button
+                                        key={keyIndex}
+                                        className={getKeyClass(key)}
+                                        onClick={() => handleVirtualKeyPress(key)}
+                                    >
+ {getKeyLabel(key)}
+                                    </button>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+                </>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
